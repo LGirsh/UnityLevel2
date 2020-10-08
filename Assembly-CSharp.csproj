@@ -70,7 +70,13 @@
     <Compile Include="Assets\DownloadedAssets\SampleScenes\Scripts\PlaceTargetWithMouse.cs" />
     <Compile Include="Assets\DownloadedAssets\SampleScenes\Scripts\SlowMoButton.cs" />
     <Compile Include="Assets\Scripts\BaseObject.cs" />
+    <Compile Include="Assets\Scripts\BaseWeapon.cs" />
+    <Compile Include="Assets\Scripts\Bot.cs" />
+    <Compile Include="Assets\Scripts\ChangeWeapon.cs" />
     <Compile Include="Assets\Scripts\Flashlight.cs" />
+    <Compile Include="Assets\Scripts\Gun.cs" />
+    <Compile Include="Assets\Scripts\Interfaces\ISetDamage.cs" />
+    <Compile Include="Assets\Scripts\Unit.cs" />
     <None Include="Assets\DownloadedAssets\AllSkyFree\AllSkyFree_Readme.txt" />
     <None Include="Assets\DownloadedAssets\SampleScenes\Shaders\Skybox-Procedural.shader" />
     <Reference Include="Unity.TextMeshPro.Editor">
