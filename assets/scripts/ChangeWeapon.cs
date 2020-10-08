@@ -28,6 +28,8 @@ public class ChangeWeapon : MonoBehaviour
             }
             i++;
         }
+
+
     }
     void Update()
     {

@@ -24,6 +24,7 @@ public class Gun : BaseWeapon
             GoAnimator.SetTrigger("shoot");
             muzzleFlash.Play();
             currentBulletCount--;
+            ammoText.text = currentBulletCount.ToString();
 
             RaycastHit hit;
 
@@ -39,10 +40,8 @@ public class Gun : BaseWeapon
                 {
                     SetDamage(hit.collider.GetComponent<ISetDamage>());
                 }
-
             }
         } 
-
     } 
     private void SetDamage(ISetDamage obj)
     {
@@ -57,11 +56,14 @@ public class Gun : BaseWeapon
         tempHit.transform.parent = hit.transform;
         Destroy(tempHit,0.5f);
     }
+
     public void ReloadBullet()
     {
         fire = true;
         currentBulletCount = bulletCount;
+        ammoText.text = currentBulletCount.ToString();
     }
+
     void Update()
     {
         if (Input.GetButtonDown("Fire1"))
@@ -72,6 +74,7 @@ public class Gun : BaseWeapon
         if (Input.GetKeyDown(Reload))
         {
             fire = false;
+            ReloadBullet();
         }
     }
 }

@@ -1,6 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using UnityEngine.UI;
 
 public abstract class BaseWeapon : BaseObject
 {
@@ -15,6 +14,13 @@ public abstract class BaseWeapon : BaseObject
     [SerializeField] protected float shootDistance;
     [SerializeField] protected int damage;
 
+    protected Text ammoText;
+
+    private void OnEnable()
+    {
+        ammoText.text = currentBulletCount.ToString();
+    }
+
     protected override void Awake()
     {
         base.Awake();
@@ -22,6 +28,7 @@ public abstract class BaseWeapon : BaseObject
         muzzleFlash = GetComponentInChildren<ParticleSystem>();
         hitParticle = Resources.Load<GameObject>("Flare");
         TMCam = Camera.main.transform;
+        ammoText = GameObject.FindGameObjectWithTag("Canvas").transform.Find("Ammo").GetComponent<Text>();
     }
 
     public abstract void Fire();   
