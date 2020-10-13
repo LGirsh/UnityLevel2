@@ -14,7 +14,6 @@ public class Gun : BaseWeapon
 
         Reload = KeyCode.R;
 
-
     }
 
     public override void Fire()
