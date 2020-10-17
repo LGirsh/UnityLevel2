@@ -1,27 +1,50 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class Bot : Unit
 {
+    private NavMeshAgent _agent;
+    private Transform _playerT;
+    private int stoppingDistance = 3;
 
-    // Start is called before the first frame update
     protected override void Awake()
     {
-        base.Awake(); // переписанный эвэйк
-        Health = 100; // здоровье равно 100
-        Dead = false; // разрешается умереть
+        base.Awake();
+        _agent = GetComponent<NavMeshAgent>();
+        _playerT = GameObject.FindObjectOfType<SinglePlayer>().transform;
+        Health = 100; 
+        Dead = false; 
     }
 
-    // Update is called once per frame
     void Update()
     {
-        if (Dead)// если разешается умереть
-        { 
-            GoRigidbody.isKinematic = true; //ставится галочка кинематик в ригидбоди
-            GoAnimator.SetBool("die", true);//триггер по имени дай равен правда 
-            Destroy(gameObject, 5f);//вызов функции дестрой с параметрами геймобжект и 5 
-            return;//выйти
+
+        if( _agent.isOnOffMeshLink )
+        {
+            transform.GetComponent<Rigidbody>().AddForce(Vector3.up * 0.005f, ForceMode.Impulse);
+        }
+
+        _agent.stoppingDistance = stoppingDistance;
+        _agent.SetDestination(_playerT.position);
+
+        if(_agent.remainingDistance > _agent.stoppingDistance)
+        {
+            GoAnimator.SetBool("move", true);
+        }
+        else
+        {
+            GoAnimator.SetBool("move", false);
+        }
+
+        if (Dead)
+        {
+            _agent.ResetPath();
+            GoRigidbody.isKinematic = true; 
+            GoAnimator.SetBool("die", true); 
+            Destroy(gameObject, 5f); 
+            return;
         }
         
     }

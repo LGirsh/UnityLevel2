@@ -40,6 +40,9 @@ public class Gun : BaseWeapon
                     SetDamage(hit.collider.GetComponent<ISetDamage>());
                 }
             }
+
+            CreateParticleHit(hit);
+
         } 
     } 
     private void SetDamage(ISetDamage obj)
