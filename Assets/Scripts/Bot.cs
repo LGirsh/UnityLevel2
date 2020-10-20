@@ -8,7 +8,7 @@ public class Bot : Unit
 {
     private NavMeshAgent _agent;
     private Transform playerPos;
-    private int stoppingDistance = 3;
+    // private int stoppingDistance = 3; // Commented by me
     private Transform target;
     
 
@@ -83,6 +83,8 @@ public class Bot : Unit
 
     private void FindVisibleTargets()
     {
+        visibleTargets.Clear(); // My Code!!!!
+
         targetInViewRadius = Physics.OverlapSphere(transform.position, maxRadius, targetMask);
         for(int i = 0;i < targetInViewRadius.Length; i++)
         {
@@ -125,14 +127,17 @@ public class Bot : Unit
         else
         {
             patrol = true;
+            //Debug.Log("PATROLLING");
+            //_agent.stoppingDistance = stopDistanse; // My code !!!!
+            //_agent.SetDestination(wayPoints[pointCounter]); // My code !!!!
         }
 
-        if( _agent.isOnOffMeshLink )
+        if ( _agent.isOnOffMeshLink )
         {
             transform.GetComponent<Rigidbody>().AddForce(Vector3.up * 0.005f, ForceMode.Impulse);
         }
         
-        _agent.SetDestination(playerPos.position);
+        //_agent.SetDestination(playerPos.position); // Commented by me !!!!
 
         if(_agent.remainingDistance > _agent.stoppingDistance)
         {
@@ -142,7 +147,6 @@ public class Bot : Unit
         {
             GoAnimator.SetBool("move", false);
         }
-
         
 
         if (patrol)
@@ -177,6 +181,7 @@ public class Bot : Unit
         else
         {
             _agent.SetDestination(target.position);
+            //Debug.Log("GOING FOR THE PLAYER!");
             _agent.stoppingDistance = attackDistance;
             if (!Dead)
             {
