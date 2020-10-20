@@ -5,6 +5,9 @@ TagManager:
   serializedVersion: 2
   tags:
   - Canvas
+  - GunT
+  - Enemy
+  - Pickup
   layers:
   - Default
   - TransparentFX
@@ -15,10 +18,10 @@ TagManager:
   - 
   - 
   - PostProcessing
-  - 
-  - 
-  - 
-  - 
+  - Weapons
+  - Pickups
+  - Targets
+  - Obstacle
   - 
   - 
   - 

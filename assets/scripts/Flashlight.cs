@@ -10,6 +10,9 @@ public class Flashlight : BaseObject
     private float currReloadTime = 0;
     
     private KeyCode control = KeyCode.F;
+    private KeyCode picker = KeyCode.P;
+
+    private Transform TMCam;
 
     private float charge = 100;
     private float rechargeRate = 0.5f;
@@ -22,6 +25,7 @@ public class Flashlight : BaseObject
         base.Awake();
         flashlightLight = GetComponentInChildren<Light>();
         chargeText = GameObject.FindGameObjectWithTag("Canvas").GetComponentInChildren<Text>();
+        TMCam = Camera.main.transform; 
     }
 
     private void ActiveFlashLight(bool val)
@@ -76,5 +80,19 @@ public class Flashlight : BaseObject
             flashlightLight.color = new Color(1f, 1f, 1f);
         }
         chargeText.text = ((int)charge).ToString();
+
+        if (Input.GetKeyDown(picker))
+        {
+            RaycastHit hit;
+
+            Ray ray = new Ray(TMCam.position, TMCam.forward);
+
+            if (Physics.Raycast(ray, out hit, 5.0f))
+            {
+                Debug.Log(hit.collider.name);
+            }
+        }
+
+
     }
 }
