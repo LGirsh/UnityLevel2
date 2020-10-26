@@ -3,29 +3,31 @@ using UnityEngine.UI;
 
 public abstract class BaseWeapon : BaseObject
 {
-    [SerializeField] protected Transform gunT;  // переменная трансформ для огнестрельных орудий
-    [SerializeField] protected ParticleSystem muzzleFlash; // переменная частицы для огнестрельных орудий
-    [SerializeField] protected GameObject hitParticle; // переменная геймобжект(объект столкновения с частицами)
-    [SerializeField] protected bool fire = true; // разрешается огонь
-    [SerializeField] protected Transform TMCam; // переменная трансформ для камеры
+    [SerializeField] protected Transform gunT;  
+    [SerializeField] protected ParticleSystem muzzleFlash; 
+    [SerializeField] protected GameObject hitParticle; 
+    [SerializeField] protected bool fire = true;
+    [SerializeField] protected Transform TMCam; 
     [SerializeField] protected GameObject cross; 
-    [SerializeField] protected int bulletCount;// колво пуль
-    [SerializeField] protected int currentBulletCount;// текущее колво пуль
-    [SerializeField] protected float shootDistance;// расстояние полёта снаряда
-    [SerializeField] protected int damage;//урон
+    [SerializeField] protected int bulletCount;
+    [SerializeField] protected int currentBulletCount;
+    [SerializeField] protected float shootDistance;
+    [SerializeField] protected int damage;
+    [SerializeField] protected RaycastHit hit;
+    [SerializeField] protected Ray ray;
     [SerializeField] protected KeyCode Reload;
 
     protected Text ammoText;// текст колва пуль
 
     private void OnEnable()
     {
-        ammoText.text = currentBulletCount.ToString();//текст = текущее колво пуль
+        ammoText.text = currentBulletCount.ToString();
     }
 
     protected override void Awake()
     {
         base.Awake();// переписанный эвэйк
-        gunT = transform.GetChild(2);// трансформ ребёнка номер 2
+        gunT = transform.GetChild(2);// трансформ реб
         muzzleFlash = GetComponentInChildren<ParticleSystem>();// получение компонента частицы 
         hitParticle = Resources.Load<GameObject>("Flare");// загружение префаба флэйер
         TMCam = Camera.main.transform;// трансформ главной камеры
