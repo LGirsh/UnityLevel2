@@ -19,13 +19,14 @@ public class BotGenerator : MonoBehaviour
     {
         SavingPath = PlayerPrefs.GetString("Waypoint");
         serializer = new XmlSerializer(typeof(SVect3[]));
-        float x = Random.Range(-30, 30);
-        float z = Random.Range(-30, 30);
-        Vector3 pos = new Vector3(x, 5f, z);
-
+       
         int count = 5;
         while(count > EnemyCounter)
         {
+            float x = Random.Range(-30, 30);
+            float z = Random.Range(-30, 30);
+            Vector3 pos = new Vector3(x, 5f, z);
+
             GameObject temp = Instantiate(botPref, pos,Quaternion.identity);
             Bot tBot = temp.GetComponent<Bot>();
             SVect3[] result;

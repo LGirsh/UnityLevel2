@@ -253,7 +253,7 @@ public class Bot : Unit
             _agent.stoppingDistance = attackDistance;
             if (!Dead)
             {
-                Debug.Log("Rotate");
+                //Debug.Log("Rotate");
                 Vector3 direction = (target.position - transform.position).normalized;
                 Quaternion lookRotationRes = Quaternion.LookRotation(direction);
                 lookRotationRes.x = 0f;

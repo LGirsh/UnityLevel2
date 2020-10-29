@@ -20,9 +20,9 @@ public class SaveWayPoint : Editor
 
         if (GUILayout.Button("Сохранить"))
         {
-            if(Wpath.nodes.Count > 0)
+            if (Wpath.nodes.Count > 0)
             {
-                foreach(Transform T in Wpath.nodes)
+                foreach (Transform T in Wpath.nodes)
                 {
                     if (!SavingNodes.Contains(T.position))
                     {
@@ -34,11 +34,10 @@ public class SaveWayPoint : Editor
             PlayerPrefs.SetString("Waypoint", Wpath.SavingPath);
             PlayerPrefs.Save();
 
-        }
-
-        using (FileStream fs = new FileStream(Wpath.SavingPath, FileMode.Create))
-        {
-            serializer.Serialize(fs, SavingNodes.ToArray());
+            using (FileStream fs = new FileStream(Wpath.SavingPath, FileMode.Create))
+            {
+                serializer.Serialize(fs, SavingNodes.ToArray());
+            }
         }
     }
 

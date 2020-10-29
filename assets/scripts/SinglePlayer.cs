@@ -1,7 +1,19 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
+
+[Serializable]
+public struct PlayerData
+{
+    public string PlayerName;
+    public int PlayerHealth;
+    public bool PlayerDead;
+}
+
 
 public class SinglePlayer : Unit
 {
+    private ISaveData _data;
+
     RaycastHit hit;
     Ray ray;
     Transform McamT;
@@ -9,10 +21,38 @@ public class SinglePlayer : Unit
     private bool Grab;
     [SerializeField] LayerMask Layer;
 
-    void Start()
+    protected override void Awake()
     {
+        base.Awake();
         Health = 100;
         Dead = false;
+
+        // _data = new StreamData();
+        PlayerData SinglePlayerData = new PlayerData
+        {
+            PlayerDead = Dead, PlayerHealth = Health, PlayerName = name
+        };
+
+        // PlayerPrefs.SetString("Name", SinglePlayerData.PlayerName);
+        // PlayerPrefs.Save();
+
+        // Debug.Log(PlayerPrefs.GetString("Name"));
+
+        // PlayerPrefs.DeleteAll();
+
+        // Debug.Log(PlayerPrefs.GetString("Name"));
+
+        // _data.Save(SinglePlayerData);
+        // PlayerData NewPlayer = _data.Load();
+
+        // Debug.Log(NewPlayer.PlayerName);
+        // Debug.Log(NewPlayer.PlayerHealth);
+        // Debug.Log(NewPlayer.PlayerDead);
+
+    }
+
+    void Start()
+    {
         McamT = Camera.main.transform;
     }
 

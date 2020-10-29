@@ -78,14 +78,20 @@
     <Compile Include="Assets\Scripts\Flashlight.cs" />
     <Compile Include="Assets\Scripts\Gun.cs" />
     <Compile Include="Assets\Scripts\GunPrefab.cs" />
+    <Compile Include="Assets\Scripts\Interfaces\ISaveData.cs" />
     <Compile Include="Assets\Scripts\Interfaces\ISetDamage.cs" />
+    <Compile Include="Assets\Scripts\MiniCamera.cs" />
     <Compile Include="Assets\Scripts\Serialization\DataStructure.cs" />
+    <Compile Include="Assets\Scripts\Serialization\JSONData.cs" />
+    <Compile Include="Assets\Scripts\Serialization\StreamData.cs" />
+    <Compile Include="Assets\Scripts\Serialization\XMLData.cs" />
     <Compile Include="Assets\Scripts\SinglePlayer.cs" />
     <Compile Include="Assets\Scripts\Unit.cs" />
     <Compile Include="Assets\Scripts\WayPointPath.cs" />
     <Compile Include="Assets\Test.cs" />
     <None Include="Assets\WayPointData\WayPointMapLevel1.xml" />
     <None Include="Assets\DownloadedAssets\AllSkyFree\AllSkyFree_Readme.txt" />
+    <None Include="Assets\XMLData.xml" />
     <None Include="Assets\DownloadedAssets\SampleScenes\Shaders\Skybox-Procedural.shader" />
     <Reference Include="Unity.TextMeshPro.Editor">
       <HintPath>C:/Users/sgirs/Desktop/Projects/Unity/Unity Level 2/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>

@@ -4,15 +4,19 @@ using UnityEngine;
 public class Window : EditorWindow
 {
     public GameObject botPref;
-    public GameObject main = null;
+    private string containerForBotsName = "containerForBotGenerator"; // My code
+    public GameObject containerForBots = null;
+
     public int objCounter;
     public float radius = 20;
-    private string containerName = "MainForBotGenerator"; // My code
 
-    [MenuItem("Инструменты/ Создание префабов/ Генератор ботов")]
+    private string containerForObjectsName = "containerForObjectsGenerator"; // My code
+    public GameObject containerForObjects = null;
+
+    [MenuItem("Инструменты/ Создание префабов/ Генератор")]
     public static void ShowWindowGenerator()
     {
-        GetWindow(typeof(Window), false, "Генератор ботов");
+        GetWindow(typeof(Window), false, "Генератор");
     }
 
     private void OnGUI()
@@ -23,46 +27,70 @@ public class Window : EditorWindow
         objCounter = EditorGUILayout.IntSlider("Количество префабов", objCounter, 3, 200);
         radius = EditorGUILayout.Slider("Радиус", radius,10,100);
 
-        if (GUILayout.Button("Создать")) 
+        if (GUILayout.Button("Создать ботов")) 
         {
             if (botPref)
             {
                 // GameObject main = new GameObject("Main");
-                if(main) //my code
+                if(containerForBots) //my code
                     return;// my code
 
-                main = new GameObject(containerName);
+                containerForBots = new GameObject(containerForBotsName);
 
                 for (int i = 0; i < objCounter; i++)
                 {
                     float angle = i * Mathf.PI * 2 / objCounter;
                     Vector3 pos = (new Vector3(Mathf.Cos(angle), 0, Mathf.Sin(angle)) * radius);
                     GameObject temp = Instantiate(botPref, pos, Quaternion.identity);
-                    temp.transform.parent = main.transform;
+                    temp.transform.parent = containerForBots.transform;
                     temp.name = "Bot (" + i + ")";
                 }
             }
         }
 
         // My code >>>>
-        if (GUILayout.Button("Выключить") && main)
+        if (GUILayout.Button("Выключить ботов") && containerForBots)
         {
-            for (int i = 0; i < main.transform.childCount; i++)
+            for (int i = 0; i < containerForBots.transform.childCount; i++)
             { 
-                Transform o = main.transform.GetChild(i);
+                Transform o = containerForBots.transform.GetChild(i);
                 o.gameObject.SetActive(false);
             }
         }
 
-        if (GUILayout.Button("Удалить") && main)
-        {
-            DestroyImmediate(main);
-            main = null;
+        if(GUILayout.Button("Удалить ботов") && containerForBots)
+        { 
+            DestroyImmediate(containerForBots);
+            containerForBots = null;
         }
 
         // My code <<<<
 
+        if (GUILayout.Button("Создать предметы"))
+        {
+            if (containerForObjects) //my code
+                return;// my code
 
+            containerForObjects = new GameObject(containerForObjectsName);
+
+            for (int i = 0; i < 5 ; i++)
+            {
+                Vector3 pos = new Vector3(Random.Range(-30,30), 1.34f, Random.Range(-30, 30));
+                GameObject temp = Instantiate(
+                    Resources.Load("Pickup", typeof(GameObject)), 
+                    pos, 
+                    Quaternion.identity) as GameObject;
+
+                temp.transform.parent = containerForObjects.transform;
+                temp.name = "MyObject (" + i + ")";
+            }
+        }
+
+        if (GUILayout.Button("Удалить предметы") && containerForObjects)
+        {
+            DestroyImmediate(containerForObjects);
+            containerForObjects = null;
+        }
     }
-
 }
+
