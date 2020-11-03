@@ -86,10 +86,20 @@ public class Window : EditorWindow
             }
         }
 
-        if (GUILayout.Button("Удалить предметы") && containerForObjects)
+        if (GUILayout.Button("Удалить предметы"))
         {
-            DestroyImmediate(containerForObjects);
-            containerForObjects = null;
+            if (!containerForObjects)
+            {
+                containerForObjects = GameObject.Find(containerForObjectsName);
+            }
+
+            if (containerForObjects)
+            {
+                DestroyImmediate(containerForObjects);
+                containerForObjects = null;
+            }
+                
+           
         }
     }
 }
