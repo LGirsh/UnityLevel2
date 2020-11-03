@@ -14,11 +14,19 @@ public class WayPointPath : MonoBehaviour
     public int nodeCounter;
 
     //Saving path
+    public  string directoryName;
+    private string savingPath;
+    private string SceneName;
 
+    public string SavingPath { get => savingPath; set => savingPath = value; }
 
     private void OnDrawGizmos()
     {
-        if(transform.childCount != nodeCounter)
+        SceneName = UnityEditor.SceneManagement.EditorSceneManager.GetActiveScene().name;
+        directoryName = "WayPointData";
+        SavingPath = Path.Combine((Application.dataPath + "/" + directoryName), ("WayPointMap" + SceneName + ".xml"));
+        Debug.Log(SavingPath);
+        if (transform.childCount != nodeCounter)
         {
             nodes.Clear();
             nodeCounter = 0;
