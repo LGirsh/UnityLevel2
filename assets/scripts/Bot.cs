@@ -1,8 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.AI;
-using UnityEditor;
+using UnityEngine.Serialization;
+using Photon.Pun;
+
+[RequireComponent(typeof(NavMeshAgent))]
+[RequireComponent(typeof(Rigidbody))]
 
 public class Bot : Unit
 {
@@ -10,12 +15,14 @@ public class Bot : Unit
     private Transform playerPos;
     // private int stoppingDistance = 3; // Commented by me
     private Transform target;
-    
-
+    GameObject temp;
+    [Header("Дистанции остановки: ")]
     [SerializeField] private float stopDistanse = 0.2f;
     [SerializeField] private float seekDistance = 2f;
     [SerializeField] private float attackDistance = 8f;
+    [Header("Скорость поворота: ")]
 
+    [SerializeField] private float rotationSpeed = 5f;
 
     [SerializeField] private List<Vector3> wayPoints = new List<Vector3>();
     private int pointCounter;
@@ -24,21 +31,46 @@ public class Bot : Unit
     private float timeWait = 3;
     private float timeOut;
 
+    //Shooting
+
+
+    [Header("Настройки для оружия: ")]
+    [SerializeField] protected int bulletCount;
+    [SerializeField] protected int currentBulletCount;
+    [SerializeField] protected float shootDistance;
+    [SerializeField] protected int damage;
+
+    [Tooltip("Объект добавляется автоматически, должен находится на дуле оружия")]
+    [SerializeField] protected Transform gunT;
+    [Tooltip("Объект добавляется автоматически")]
+    [SerializeField] protected ParticleSystem muzzleFlash;
+    [Tooltip("Объект добавляется автоматически")]
+    [SerializeField] protected GameObject hitParticle;
+
+
+    [Header("Состояние бота: ")]
     [SerializeField] private bool patrol;
     [SerializeField] private bool shooting;
 
     //Target
+    [Header("Списки целей: ")]
+
     [SerializeField] private Collider[] targetInViewRadius;
     [SerializeField] private List<Transform> visibleTargets = new List<Transform>();
 
-    [SerializeField] private float maxAngle = 30;
-    [SerializeField] private float maxRadius = 20;
+    [Header("Настройки зоны видимости: ")]
+
+    [Range(30,90)] [SerializeField] private float maxAngle = 30;
+    [Range(10,40)] [SerializeField] private float maxRadius = 20;
 
     [SerializeField] private LayerMask targetMask;
     [SerializeField] private LayerMask obstacleMask;
 
+    public List<Vector3> WayPoints { get => wayPoints; set => wayPoints = value; }
 
-#if UNITY_EDITOR    
+
+
+#if UNITY_EDITOR
 
     private void OnDrawGizmos()
     {
@@ -49,8 +81,41 @@ public class Bot : Unit
 
     }
 
-#endif
+    [ContextMenu("Default Values")]
+    public void Default()
+    {
+        bulletCount =30;
+        shootDistance = 1000f;
+        damage = 20;
+        maxAngle = 30;
+        maxRadius = 20;
+        patrol = true;
+    }
 
+    [ContextMenu("Random values for visibility")]
+    public void RandomAngle()
+    {
+        maxRadius = Random.Range(10,40);
+        maxAngle = Random.Range(30, 90);
+    }
+#endif
+    private void Destroy()
+    {
+        PhotonNetwork.Destroy(temp);
+    }
+    IEnumerator Shoot(RaycastHit playerHit)
+    {
+        yield return new WaitForSeconds(0.5f);
+        muzzleFlash.Play();
+        playerHit.collider.GetComponent<ISetDamage>().SetDamage((damage));
+        temp = PhotonNetwork.Instantiate("Prefabs/Flare", playerHit.point, Quaternion.identity);
+        temp.transform.parent = playerHit.transform;
+        Invoke("Destroy", 0.8f);
+        //Destroy(temp, 0.8f);
+
+        PhotonNetwork.Destroy(temp);
+        shooting = false;
+    }
     IEnumerator FindTargets(float delay)
     {
         while (true)
@@ -64,26 +129,38 @@ public class Bot : Unit
     {
         base.Awake();
         _agent = GetComponent<NavMeshAgent>();
-        playerPos = GameObject.FindObjectOfType<SinglePlayer>().transform;
+        _agent.updatePosition = true;
+        _agent.updateRotation = true;
         _agent.stoppingDistance = stopDistanse;
+
+        playerPos = GameObject.FindObjectOfType<SinglePlayer>().transform;
 
         Health = 100; 
         Dead = false;
 
         patrol = true;
 
-        foreach(Transform item in wayPointMain.transform)
-        {
-            wayPoints.Add(item.position);
-        }
+        //foreach(Transform item in wayPointMain.transform)
+        //{
+        //    wayPoints.Add(item.position);
+        //}
 
         StartCoroutine(FindTargets(0.1f));
         //gun
+
+        gunT = GameObject.FindGameObjectWithTag("GunT").transform;
+        muzzleFlash = GetComponentInChildren<ParticleSystem>();
+        //hitParticle = Resources.Load<GameObject>("Flare");
+        bulletCount = 30;
+        currentBulletCount = bulletCount;
+        shootDistance = 1000f;
+        damage = 20;
+
     }
 
     private void FindVisibleTargets()
     {
-        visibleTargets.Clear(); // My Code!!!!
+        //visibleTargets.Clear(); // My Code!!!!
 
         targetInViewRadius = Physics.OverlapSphere(transform.position, maxRadius, targetMask);
         for(int i = 0;i < targetInViewRadius.Length; i++)
@@ -132,10 +209,10 @@ public class Bot : Unit
             //_agent.SetDestination(wayPoints[pointCounter]); // My code !!!!
         }
 
-        if ( _agent.isOnOffMeshLink )
-        {
-            transform.GetComponent<Rigidbody>().AddForce(Vector3.up * 0.005f, ForceMode.Impulse);
-        }
+        //if ( _agent.isOnOffMeshLink )
+        //{
+        //   transform.GetComponent<Rigidbody>().AddForce(Vector3.up * 0.005f, ForceMode.Impulse);
+        //}
         
         //_agent.SetDestination(playerPos.position); // Commented by me !!!!
 
@@ -181,19 +258,49 @@ public class Bot : Unit
         else
         {
             _agent.SetDestination(target.position);
-            //Debug.Log("GOING FOR THE PLAYER!");
             _agent.stoppingDistance = attackDistance;
             if (!Dead)
             {
-                transform.LookAt(new Vector3(target.position.x, 1, transform.position.z));
+                //Debug.Log("Rotate");
+                Vector3 direction = (target.position - transform.position).normalized;
+                Quaternion lookRotationRes = Quaternion.LookRotation(direction);
+                lookRotationRes.x = 0f;
+                lookRotationRes.z = 0f;
+
+                transform.rotation = Quaternion.Slerp(transform.rotation, lookRotationRes, Time.deltaTime *rotationSpeed);
             }
 
 
+            RaycastHit hit;
+            Ray ray = new Ray(transform.position + Vector3.up, transform.forward);
 
+            if(Physics.Raycast(ray, out hit, shootDistance,targetMask))
+            {
+                if (hit.collider.tag == "Player" && !shooting)
+                {
+                    _agent.ResetPath();
+                    GoAnimator.SetBool("shoot", true);
+                    shooting = true;
+                    StartCoroutine(Shoot(hit));
+                }
+                else
+                {
+                    //GoAnimator.SetBool("shoot", false);
+                }
+            }
+
+            else
+            {
+                defaultState();
+                GoAnimator.SetBool("shoot", false);
+
+            }
         }
+
 
         if (Dead)
         {
+            _agent.ResetPath();
             GoRigidbody.isKinematic = true; 
             GoAnimator.SetBool("die", true); 
             Destroy(gameObject, 5f); 

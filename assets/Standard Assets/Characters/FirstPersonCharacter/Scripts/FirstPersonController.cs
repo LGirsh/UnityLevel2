@@ -4,6 +4,8 @@ using UnityStandardAssets.CrossPlatformInput;
 using UnityStandardAssets.Utility;
 using Random = UnityEngine.Random;
 
+using Photon.Pun;
+
 #pragma warning disable 618, 649
 namespace UnityStandardAssets.Characters.FirstPerson
 {
@@ -43,9 +45,14 @@ namespace UnityStandardAssets.Characters.FirstPerson
         private bool m_Jumping;
         private AudioSource m_AudioSource;
 
+        private PhotonView _photon;
+
+
         // Use this for initialization
         private void Start()
         {
+            _photon = GetComponent<PhotonView>();
+            m_Camera = GetComponentInChildren<Camera>();
             m_CharacterController = GetComponent<CharacterController>();
             m_Camera = Camera.main;
             m_OriginalCameraPosition = m_Camera.transform.localPosition;
@@ -56,12 +63,22 @@ namespace UnityStandardAssets.Characters.FirstPerson
             m_Jumping = false;
             m_AudioSource = GetComponent<AudioSource>();
 			m_MouseLook.Init(transform , m_Camera.transform);
+
+            if(!_photon.IsMine && PhotonNetwork.IsConnected)
+            {
+                m_Camera.enabled = false;
+            }
         }
 
 
         // Update is called once per frame
         private void Update()
         {
+            if (!_photon.IsMine && PhotonNetwork.IsConnected)
+            {
+                return;
+            }
+
             RotateView();
             // the jump state needs to read here to make sure it is not missed
             if (!m_Jump)
@@ -95,6 +112,10 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
         private void FixedUpdate()
         {
+            if (!_photon.IsMine && PhotonNetwork.IsConnected)
+            {
+                return;
+            }
             float speed;
             GetInput(out speed);
             // always move along the camera forward as it is the direction that it being aimed at

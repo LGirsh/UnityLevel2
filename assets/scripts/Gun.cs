@@ -1,7 +1,10 @@
 ﻿using UnityEngine;
+using Photon.Pun;
 
 public class Gun : BaseWeapon 
 {
+
+
     protected override void Awake()
     {
         base.Awake();
@@ -24,12 +27,11 @@ public class Gun : BaseWeapon
             currentBulletCount--;
             ammoText.text = currentBulletCount.ToString();
 
-            RaycastHit hit;
+            Ray ray = new Ray(TMCam.position, TMCam.forward);   // In BaseWeapon there is another "ray"
 
-            Ray ray = new Ray(TMCam.position, TMCam.forward);
-
-            if(Physics.Raycast(ray, out hit, shootDistance))
+            if (Physics.Raycast(ray, out hit, shootDistance))
             {
+
                 if (hit.collider.tag == "Player")
                 {
                     return;
@@ -53,7 +55,7 @@ public class Gun : BaseWeapon
     }
     private void CreateParticleHit(RaycastHit hit)
     {
-        GameObject tempHit = Instantiate(hitParticle, hit.point, Quaternion.identity);
+        GameObject tempHit = PhotonNetwork.Instantiate("Prefabs/Flare", hit.point, Quaternion.identity);
         tempHit.transform.parent = hit.transform;
         Destroy(tempHit,0.5f);
     }
