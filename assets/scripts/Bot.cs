@@ -1,8 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.AI;
-using UnityEditor;
+using UnityEngine.Serialization;
+using Photon.Pun;
 
 [RequireComponent(typeof(NavMeshAgent))]
 [RequireComponent(typeof(Rigidbody))]
@@ -13,7 +15,7 @@ public class Bot : Unit
     private Transform playerPos;
     // private int stoppingDistance = 3; // Commented by me
     private Transform target;
-    
+    GameObject temp;
     [Header("Дистанции остановки: ")]
     [SerializeField] private float stopDistanse = 0.2f;
     [SerializeField] private float seekDistance = 2f;
@@ -97,15 +99,21 @@ public class Bot : Unit
         maxAngle = Random.Range(30, 90);
     }
 #endif
-
+    private void Destroy()
+    {
+        PhotonNetwork.Destroy(temp);
+    }
     IEnumerator Shoot(RaycastHit playerHit)
     {
         yield return new WaitForSeconds(0.5f);
         muzzleFlash.Play();
         playerHit.collider.GetComponent<ISetDamage>().SetDamage((damage));
-        GameObject temp = Instantiate(hitParticle, playerHit.point, Quaternion.identity);
+        temp = PhotonNetwork.Instantiate("Prefabs/Flare", playerHit.point, Quaternion.identity);
         temp.transform.parent = playerHit.transform;
-        Destroy(temp, 0.8f);
+        Invoke("Destroy", 0.8f);
+        //Destroy(temp, 0.8f);
+
+        PhotonNetwork.Destroy(temp);
         shooting = false;
     }
     IEnumerator FindTargets(float delay)
@@ -142,7 +150,7 @@ public class Bot : Unit
 
         gunT = GameObject.FindGameObjectWithTag("GunT").transform;
         muzzleFlash = GetComponentInChildren<ParticleSystem>();
-        hitParticle = Resources.Load<GameObject>("Flare");
+        //hitParticle = Resources.Load<GameObject>("Flare");
         bulletCount = 30;
         currentBulletCount = bulletCount;
         shootDistance = 1000f;

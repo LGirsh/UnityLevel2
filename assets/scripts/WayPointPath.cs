@@ -25,7 +25,7 @@ public class WayPointPath : MonoBehaviour
         SceneName = UnityEditor.SceneManagement.EditorSceneManager.GetActiveScene().name;
         directoryName = "WayPointData";
         SavingPath = Path.Combine((Application.dataPath + "/" + directoryName), ("WayPointMap" + SceneName + ".xml"));
-        Debug.Log(SavingPath);
+        //Debug.Log(SavingPath);
         if (transform.childCount != nodeCounter)
         {
             nodes.Clear();

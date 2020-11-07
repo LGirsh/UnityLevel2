@@ -13,7 +13,7 @@ public class MiniCamera : MonoBehaviour
 
     void Start()
     {
-        Player = FindObjectOfType<SinglePlayer>().transform;
+        //Player = FindObjectOfType<SinglePlayer>().transform;
 
         _mapCam = GetComponent<Camera>();
         _replShader = Shader.Find("Toon/Basic Outline");
